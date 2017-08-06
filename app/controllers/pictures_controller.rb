@@ -9,10 +9,6 @@ class PicturesController < ApplicationController
     @photos_from_2014 = Picture.pictures_created_in_year(2014)
   end
 
-  def picture_params
-    params.require(:picture).permit(:artist, :title, :url)
-  end
-
   def by_year
     @selected_year = Picture.pictures_created_in_year(params[:q])
   end
@@ -30,11 +26,6 @@ class PicturesController < ApplicationController
 
     @picture = Picture.new(picture_params)
 
-    # @picture = Picture.new
-    # @picture.title = params[:picture][:title]
-    # @picture.artist = params[:picture][:artist]
-    # @picture.url = params[:picture][:url]
-
     if @picture.save
       # if the picture gets saved, generate a get request to "/pictures" (the index)
       redirect_to "/pictures"
@@ -49,12 +40,9 @@ class PicturesController < ApplicationController
   end
 
   def update
-   @picture = Picture.find(params[:id])
-   @picture.title = params[:picture][:title]
-   @picture.artist = params[:picture][:artist]
-   @picture.url = params[:picture][:url]
+    @picture = Picture.find(params[:id])
 
-    if @picture.save
+    if @picture.update(picture_params)
      redirect_to "/pictures/#{@picture.id}"
     else
      render :edit
@@ -66,5 +54,13 @@ class PicturesController < ApplicationController
    @picture.destroy
    redirect_to "/pictures"
   end
+
+  private
+
+  def picture_params
+    params.require(:picture).permit(:artist, :title, :url)
+  end
+
+
 
 end
